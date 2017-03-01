@@ -1,0 +1,14 @@
+# create a DNS zone in the DEV VPC (where the clients are)
+resource "aws_route53_zone" "zone" {
+  name = "zodiac"
+  vpc_id = "vpc-c55198a0"
+}
+
+# create the DNS record for the grid
+resource "aws_route53_record" "hostname" {
+  zone_id = "${aws_route53_zone.zone.zone_id}"
+  name = "grid.zodiac"
+  type = "A"
+  ttl = "300"
+  records = ["${aws_instance.zodiac-grid-linux.0.public_ip}"]
+}
