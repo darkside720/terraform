@@ -1,5 +1,5 @@
 resource "aws_instance" "zodiac-grid-linux" {
-  count = 2
+  count = 5
 
   subnet_id = "${aws_subnet.subnet.id}"
 
@@ -31,7 +31,7 @@ resource "aws_instance" "zodiac-grid-linux" {
 # TODO Swarm not yet (1.13) supported on Windows
 # resource "aws_instance" "selenium-grid-windows" {
 #   subnet_id = "${aws_subnet.subnet.id}"
-
+#
 #   ami = "ami-e7b755f1"
 
 #   instance_type = "t2.micro"
@@ -51,4 +51,4 @@ resource "aws_instance" "zodiac-grid-linux" {
 #   $admin.psbase.invoke("SetPassword", "Foo*Bar")
 # </powershell>
 # EOF
-# }
+#   }
