@@ -1,26 +1,42 @@
+## Create index.php (shows web pasge visit counts)
 <?php
-$dbHost = $_ENV["DB_HOST"];
-$dbPort = $_ENV['DB_PORT'];
-$dbName = $_ENV["DB_NAME"];
-$dbUser = $_ENV["DB_USER"];
-$dbPass = $_ENV['DB_PASS'];
-$redisHost = $_ENV['REDIS_HOST'];
-$redisPort = $_ENV['REDIS_PORT'];
-$dsn = "mysql:host=$dbHost;port=$dbPort;dbname=$dbName";
-$options = [
-PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-PDO::ATTR_EMULATE_PREPARES => false,
-];
-try {
-$pdo = new PDO($dsn, $dbUser, $dbPass, $options);
-} catch (\PDOException $e) {
-throw new \PDOException($e->getMessage(), (int)$e->getCode());
+$link = mysql_connect('<your_aws_mysql_rds_endpoint>', 'myuser', 'mypassword');
+if (!$link)
+{
+die('Could not connect: ' . mysql_error());
 }
-$stmt = $pdo->query('SELECT name FROM users');
-while ($row = $stmt->fetch()) {
-echo $row['name'] . "\n";
+else
+{
+$selectdb = mysql_select_db("mydb");
+if (!$selectdb)
+{
+die('Could not connect: ' . mysql_error());
 }
-$redis = new Redis();
-$redis->connect($redisHost, $redisPort);
-echo "Server is running: " . $redis->ping();
+else
+{
+$data = mysql_query("SELECT visits FROM counter");
+if (!$data)
+{
+die('Could not connect: ' . mysql_error());
+}
+else
+{
+$add=mysql_query("UPDATE counter SET visits = visits+1");
+if(!$add)
+{
+die('Could not connect: ' . mysql_error());
+}
+else
+{
+print "<table><tr><th>Visits</th></tr>";
+while($value=mysql_fetch_array($data))
+{
+print "<tr><td>".$value['visits']."</td></tr>";
+}
+print "</table>";
+}
+}
+}
+}
+mysql_close($link);
+?>
